@@ -1,13 +1,16 @@
 package com.jie.maven.firstspringboot.controller;
 
+import com.jie.maven.firstspringboot.dto.QuestionDTO;
 import com.jie.maven.firstspringboot.mapper.QuestionMapper;
 import com.jie.maven.firstspringboot.mapper.UserMapper;
 import com.jie.maven.firstspringboot.model.Question;
 import com.jie.maven.firstspringboot.model.User;
+import com.jie.maven.firstspringboot.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,10 +19,20 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class PublishController {
+
     @Autowired
-    UserMapper userMapper;
-    @Autowired
-    QuestionMapper questionMapper;
+    QuestionService questionService;
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable("id") Integer id ,Model model){
+        QuestionDTO question = questionService.getById(id);
+        model.addAttribute("title",question.getTitle());
+        model.addAttribute("description",question.getDescription());
+
+        model.addAttribute("tag",question.getTag());
+        return "publish";
+
+    }
     @GetMapping("/publish")
     public String publish(){
         return "publish";
@@ -29,6 +42,7 @@ public class PublishController {
     public String dopublish(@RequestParam(value = "title", required = false) String title,
                             @RequestParam(value = "description", required = false) String description,
                             @RequestParam(value = "tag", required = false) String tag,
+                            @RequestParam(value="id",required = false) Long id,
                             HttpServletRequest request, Model model){
         model.addAttribute("title",title);
         model.addAttribute("description",description);
@@ -61,7 +75,8 @@ public class PublishController {
         question.setCreator(user.getId());
         question.setGmtCreate(System.currentTimeMillis());
         question.setGmtModified(question.getGmtCreate());
-        questionMapper.create(question);
+        question.setId(id);
+        questionService.createOrUpdate(question);
         return "redirect:/";
 
     }

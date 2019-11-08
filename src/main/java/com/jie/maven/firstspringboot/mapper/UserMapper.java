@@ -1,10 +1,7 @@
 package com.jie.maven.firstspringboot.mapper;
 
 import com.jie.maven.firstspringboot.model.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 @Mapper
@@ -17,4 +14,8 @@ public interface UserMapper {
     User findByToken(@Param("token") String token);
     @Select("select * from user where id=#{creator}")
     User findById(@Param("creator") Integer creator);
+    @Select("select * from user where account_id=#{accountId}")
+    User findByAccountId( @Param("accountId")String accountId);
+    @Update("update user set name=#{name},gmt_modified=#{gmtModified},avatar_url=#{avatarUrl},token=#{token} where id =#{id}")
+    void update(User dbUser);
 }

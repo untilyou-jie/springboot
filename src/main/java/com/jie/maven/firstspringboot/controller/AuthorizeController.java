@@ -5,6 +5,7 @@ import com.jie.maven.firstspringboot.dto.GithubUser;
 import com.jie.maven.firstspringboot.mapper.UserMapper;
 import com.jie.maven.firstspringboot.model.User;
 import com.jie.maven.firstspringboot.provider.GithubProvider;
+import com.jie.maven.firstspringboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ public class AuthorizeController {
     @Value("${github.client.id}")
     private String clientId;
 
+
     @Value("${github.client.secret}")
     private String clientSecret;
 
@@ -30,6 +32,8 @@ public class AuthorizeController {
     private GithubProvider githubProvider;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserService userService;
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name="state") String state ,
@@ -49,12 +53,9 @@ public class AuthorizeController {
             user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatarUrl());
-           userMapper.insert(user);
+            userService.createOrUpdate(user);
            response.addCookie(new Cookie("token",token));
-            request.getSession().setAttribute("user",user);
             return "redirect:/";
 
         }else{
@@ -63,5 +64,13 @@ public class AuthorizeController {
         }
 
 
+    }
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,HttpServletResponse response){
+        request.getSession().removeAttribute("user");
+        Cookie c = new Cookie("token",null);
+        c.setMaxAge(0);
+        response.addCookie(c);
+        return "redirect:/";
     }
 }

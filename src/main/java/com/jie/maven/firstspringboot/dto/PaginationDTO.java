@@ -20,8 +20,8 @@ public class PaginationDTO<T> {
     private Integer totalPage;
 
 
-    public void setPagination(Integer count, Integer page, Integer size) {
-        this.totalPage=count;
+    public void setPagination(Integer totalPage, Integer page) {
+        this.totalPage=totalPage;
         this.page=page;
         pages.add(page);
         for(int i=1;i<3;i++) {
