@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <!--JDBC驱动jar包的位置  暂时不需要-->
+    <!-- <classPathEntry location="/Program Files/IBM/SQLLIB/java/db2java.zip" /> -->
+
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <!--分页插件-->
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
+
+        <!--JDBC数据库连接-->
+        <jdbcConnection driverClass="org.h2.Driver"
+                        connectionURL="jdbc:h2:~/springboot"
+                        userId="sa"
+                        password="123">
+        </jdbcConnection>
+
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+        <!--Model模型生成器,用来生成含有主键key的类，记录类 以及查询Example类
+      targetPackage     指定生成的model生成所在的包名
+       targetProject     指定在该项目下所在的路径 -->
+
+        <javaModelGenerator targetPackage="com.jie.maven.firstspringboot.model" targetProject="src/main/java">
+            <!-- 是否允许子包，即targetPackage.schemaName.tableName -->
+            <property name="enableSubPackages" value="true" />
+            <!-- 是否对类CHAR类型的列的数据进行trim操作 -->
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+        <!--
+        mapper映射文件生成所在的目录 为每一个数据库的表生成对应的SqlMap文件
+        -->
+        <sqlMapGenerator targetPackage="mapper"  targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+        <!--
+       客户端代码，生成易于使用的针对Model对象和XML配置文件的代码
+       type="ANNOTATEDMAPPER",生成Java Model和基于注解的Mapper对象
+       type="MIXEDMAPPER",生成基于注解的Java Model和相应的Mapper对象
+       type="XMLMAPPER",生成SQLMap XML文件和独立的Mapper接口
+
+       -->
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.jie.maven.firstspringboot.mapper"  targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <table tableName="user" domainObjectName="User"></table>
+        <table tableName="question" domainObjectName="Question"></table>
+
+    </context>
+</generatorConfiguration>
