@@ -1,6 +1,8 @@
 package com.jie.maven.firstspringboot.controller;
 
 import com.jie.maven.firstspringboot.dto.QuestionDTO;
+import com.jie.maven.firstspringboot.exception.CustomizeErrorCode;
+import com.jie.maven.firstspringboot.exception.CustomizeException;
 import com.jie.maven.firstspringboot.mapper.QuestionMapper;
 import com.jie.maven.firstspringboot.mapper.UserMapper;
 import com.jie.maven.firstspringboot.model.Question;
@@ -26,6 +28,8 @@ public class PublishController {
     @GetMapping("/publish/{id}")
     public String edit(@PathVariable("id") Integer id ,Model model){
         QuestionDTO question = questionService.getById(id);
+
+
         model.addAttribute("title",question.getTitle());
         model.addAttribute("description",question.getDescription());
 

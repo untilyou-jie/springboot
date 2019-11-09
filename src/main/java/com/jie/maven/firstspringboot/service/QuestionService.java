@@ -2,6 +2,9 @@ package com.jie.maven.firstspringboot.service;
 
 import com.jie.maven.firstspringboot.dto.PaginationDTO;
 import com.jie.maven.firstspringboot.dto.QuestionDTO;
+import com.jie.maven.firstspringboot.exception.CustomizeErrorCode;
+import com.jie.maven.firstspringboot.exception.CustomizeException;
+import com.jie.maven.firstspringboot.mapper.QuestionExtMapper;
 import com.jie.maven.firstspringboot.mapper.QuestionMapper;
 import com.jie.maven.firstspringboot.mapper.UserMapper;
 import com.jie.maven.firstspringboot.model.Question;
@@ -19,6 +22,9 @@ import java.util.List;
 public class QuestionService {
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
+
     @Autowired
     private UserMapper userMapper;
     public PaginationDTO list(Integer page, Integer size) {
@@ -102,10 +108,12 @@ public class QuestionService {
     }
 
     public QuestionDTO getById(Integer id) {
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.createCriteria().andIdEqualTo(id);
-        List<Question> questions = questionMapper.selectByExample(questionExample);
-        Question  question = questions.get(0);
+        Question question = questionMapper.selectByPrimaryKey(id);
+        if(question==null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOTFOUND);
+
+        }
+
         QuestionDTO questionDTO = new QuestionDTO();
         //srpingboot的工具类  可以映射类 通过系统的属性名
         BeanUtils.copyProperties(question,questionDTO);
@@ -116,7 +124,11 @@ public class QuestionService {
 
     public void createOrUpdate(Question question) {
         if(question.getId()==null){
-
+            question.setGmtCreate(System.currentTimeMillis());
+            question.setGmtModified(question.getGmtCreate());
+            question.setViewCount(0);
+            question.setLikeCount(0);
+            question.setCommentCount(0);
             questionMapper.insert(question);
 
         }else{
@@ -128,7 +140,19 @@ public class QuestionService {
             QuestionExample example = new QuestionExample();
             example.createCriteria()
                     .andIdEqualTo(question.getId());
-            questionMapper.updateByExampleSelective(updateQuestion,example);
+            int result = questionMapper.updateByExampleSelective(updateQuestion,example);
+            if(result!=1){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOTFOUND);
+
+            }
         }
+    }
+
+    public void viewCount(Integer id) {
+        Question question = questionMapper.selectByPrimaryKey(id);
+        Question updateQuestion = new Question();
+        updateQuestion.setId(question.getId());
+        updateQuestion.setViewCount(1);
+        questionExtMapper.incView(updateQuestion);
     }
 }
