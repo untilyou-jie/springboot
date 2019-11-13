@@ -65,7 +65,7 @@ public class QuestionService {
     }
 
 
-    public PaginationDTO list(Integer id, Integer page, Integer size) {
+    public PaginationDTO list(long id, Integer page, Integer size) {
         Integer offset = size*(page-1);
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria().andIdEqualTo(id);
@@ -107,7 +107,7 @@ public class QuestionService {
         return paginationDTO;
     }
 
-    public QuestionDTO getById(Integer id) {
+    public QuestionDTO getById(long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         if(question==null){
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOTFOUND);
@@ -148,7 +148,7 @@ public class QuestionService {
         }
     }
 
-    public void viewCount(Integer id) {
+    public void viewCount(long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         Question updateQuestion = new Question();
         updateQuestion.setId(question.getId());

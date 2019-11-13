@@ -6,6 +6,7 @@ import com.jie.maven.firstspringboot.mapper.QuestionMapper;
 import com.jie.maven.firstspringboot.mapper.UserMapper;
 import com.jie.maven.firstspringboot.model.Question;
 import com.jie.maven.firstspringboot.model.User;
+import com.jie.maven.firstspringboot.service.CommentService;
 import com.jie.maven.firstspringboot.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
