@@ -14,8 +14,10 @@
         window.onload=function () {
 
           var  res = window.localStorage.getItem("closeable") ;
+            window.localStorage.removeItem("closeable");
           if(res =="true"){
               window.close();
+              window.localStorage.removeItem("closeable");
           }
         }
     </script>

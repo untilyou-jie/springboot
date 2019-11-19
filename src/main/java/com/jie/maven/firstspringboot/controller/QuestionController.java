@@ -1,6 +1,7 @@
 package com.jie.maven.firstspringboot.controller;
 
 
+import com.jie.maven.firstspringboot.Enums.CommenTypeEnum;
 import com.jie.maven.firstspringboot.dto.CommentDTO;
 import com.jie.maven.firstspringboot.dto.QuestionDTO;
 import com.jie.maven.firstspringboot.model.Comment;
@@ -24,7 +25,7 @@ public class QuestionController {
     @GetMapping("/question/{id}")
     public String question(@PathVariable("id") Long id, Model model){
         QuestionDTO question = questionService.getById(id);
-        List<CommentDTO> commentDTOS = commentService.listByParentId(id);
+        List<CommentDTO> commentDTOS = commentService.listByParentId(id, CommenTypeEnum.QUESTION);
         model.addAttribute("question",question);
         model.addAttribute("comments",commentDTOS);
         //增加问题次数

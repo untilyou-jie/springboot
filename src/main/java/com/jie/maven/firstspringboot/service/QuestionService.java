@@ -29,7 +29,9 @@ public class QuestionService {
     private UserMapper userMapper;
     public PaginationDTO list(Integer page, Integer size) {
         Integer offset = size*(page-1);
-        List<Question> questions =questionMapper.selectByExampleWithRowbounds(new QuestionExample(),new RowBounds(offset,size
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
+        List<Question> questions =questionMapper.selectByExampleWithRowbounds(questionExample,new RowBounds(offset,size
         ));
         List<QuestionDTO> questionDTOS =new ArrayList<>();
         PaginationDTO paginationDTO = new PaginationDTO();

@@ -5,9 +5,10 @@ import com.jie.maven.firstspringboot.exception.CustomizeException;
 import lombok.Data;
 
 @Data
-public class ResultDto {
+public class ResultDto<T> {
     private int code;
     private String message;
+    private T data;
     public static ResultDto errorOf(int code,String message){
         ResultDto rd = new ResultDto();
         rd.setCode(code);
@@ -23,6 +24,15 @@ public class ResultDto {
         ResultDto rd = new ResultDto();
         rd.setCode(200);
         rd.setMessage("登陆成功");
+        return  rd;
+
+    }
+    ///
+    public static <T> ResultDto okOf(T t){
+        ResultDto rd = new ResultDto();
+        rd.setCode(200);
+        rd.setMessage("登陆成功");
+        rd.setData(t);
         return  rd;
 
     }
