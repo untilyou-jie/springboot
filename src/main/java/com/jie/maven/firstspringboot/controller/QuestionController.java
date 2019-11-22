@@ -5,6 +5,7 @@ import com.jie.maven.firstspringboot.Enums.CommenTypeEnum;
 import com.jie.maven.firstspringboot.dto.CommentDTO;
 import com.jie.maven.firstspringboot.dto.QuestionDTO;
 import com.jie.maven.firstspringboot.model.Comment;
+import com.jie.maven.firstspringboot.model.Question;
 import com.jie.maven.firstspringboot.service.CommentService;
 import com.jie.maven.firstspringboot.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,11 @@ public class QuestionController {
     @GetMapping("/question/{id}")
     public String question(@PathVariable("id") Long id, Model model){
         QuestionDTO question = questionService.getById(id);
+        List<QuestionDTO> relatedQuestion = questionService.selectRelated(question);
         List<CommentDTO> commentDTOS = commentService.listByParentId(id, CommenTypeEnum.QUESTION);
         model.addAttribute("question",question);
         model.addAttribute("comments",commentDTOS);
+        model.addAttribute("relatedQuestion",relatedQuestion);
         //增加问题次数
         questionService.viewCount(id);
         return "question";

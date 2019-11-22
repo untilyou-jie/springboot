@@ -10,13 +10,16 @@ import com.jie.maven.firstspringboot.mapper.UserMapper;
 import com.jie.maven.firstspringboot.model.Question;
 import com.jie.maven.firstspringboot.model.QuestionExample;
 import com.jie.maven.firstspringboot.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -156,5 +159,27 @@ public class QuestionService {
         updateQuestion.setId(question.getId());
         updateQuestion.setViewCount(1);
         questionExtMapper.incView(updateQuestion);
+    }
+
+    public List<QuestionDTO> selectRelated(QuestionDTO queryDto) {
+        if(StringUtils.isBlank(queryDto.getTag())){
+                return new ArrayList<>();
+        }
+        String[] tags = StringUtils.split(queryDto.getTag(),",");
+        //给每一个剪切后的字符串加上|
+        String regexpTag = Arrays.stream(tags).collect(Collectors.joining("|"));
+        Question question = new Question();
+        question.setId(queryDto.getId());
+        question.setTag(regexpTag);
+        List<Question> questions = questionExtMapper.selectRelated(question);
+        List<QuestionDTO> questionDTOS = questions.stream().map(q->{
+            QuestionDTO questionDTO   = new QuestionDTO();
+           BeanUtils.copyProperties(q,questionDTO);
+           return questionDTO;
+
+                }).collect(Collectors.toList());
+
+
+        return questionDTOS;
     }
 }

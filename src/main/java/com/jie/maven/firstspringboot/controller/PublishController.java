@@ -1,6 +1,8 @@
 package com.jie.maven.firstspringboot.controller;
 
+import com.jie.maven.firstspringboot.cache.TagCache;
 import com.jie.maven.firstspringboot.dto.QuestionDTO;
+import com.jie.maven.firstspringboot.dto.TagDTO;
 import com.jie.maven.firstspringboot.exception.CustomizeErrorCode;
 import com.jie.maven.firstspringboot.exception.CustomizeException;
 import com.jie.maven.firstspringboot.mapper.QuestionMapper;
@@ -8,6 +10,7 @@ import com.jie.maven.firstspringboot.mapper.UserMapper;
 import com.jie.maven.firstspringboot.model.Question;
 import com.jie.maven.firstspringboot.model.User;
 import com.jie.maven.firstspringboot.service.QuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,13 +35,15 @@ public class PublishController {
 
         model.addAttribute("title",question.getTitle());
         model.addAttribute("description",question.getDescription());
-
+        model.addAttribute("id",question.getId());
         model.addAttribute("tag",question.getTag());
+        model.addAttribute("tags", TagCache.get());
         return "publish";
 
     }
     @GetMapping("/publish")
-    public String publish(){
+    public String publish(Model model){
+        model.addAttribute("tags", TagCache.get());
         return "publish";
 
     }
@@ -50,7 +55,7 @@ public class PublishController {
                             HttpServletRequest request, Model model){
         model.addAttribute("title",title);
         model.addAttribute("description",description);
-
+        model.addAttribute("tags", TagCache.get());
         model.addAttribute("tag",tag);
 
         if (title==null || title=="") {
@@ -65,7 +70,13 @@ public class PublishController {
             model.addAttribute("error", "标签不能为空");
             return "publish";
         }
+        String invalid = TagCache.filterInvalid(tag);
 
+        if(StringUtils.isNotBlank(invalid)){
+            model.addAttribute("error", "非法标签"+invalid);
+            return "publish";
+
+        }
         User user = (User) request.getSession().getAttribute("user");
         if(user==null){
             model.addAttribute("error","请登录后重试.");

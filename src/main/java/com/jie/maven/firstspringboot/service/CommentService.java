@@ -78,7 +78,7 @@ public class CommentService {
         return  new ArrayList<>();
 
         }
-        //把comments 的使用creator弄成一个集合
+        //把comments 的创建者使用creator弄成一个集合
         Set<Long> commeators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
         List<Long>  userIds = new ArrayList<>();
         UserExample userExample = new UserExample();

@@ -118,3 +118,24 @@ function collapseComments(e) {
         }
     }
 }
+function selectTag(e) {
+    var value = e.getAttribute("data-tag");
+    var perious =$("#Tag").val();
+    if(perious.indexOf("value")==-1){
+        if(perious){
+            $("#Tag").val(perious+","+value);
+
+        }else{
+            $("#Tag").val(value);
+
+        }
+
+    }
+
+
+
+    
+}
+function showSelectTag() {
+    $("#select-tag").show();
+}
