@@ -30,6 +30,9 @@ public class CommentService {
     UserMapper userMapper;
     @Autowired
     CommentExtMapper commentExtMapper;
+
+    @Autowired
+    NotificationMapper notificationMapper;
     @Transient
     public void insert(Comment comment) {
         if(comment.getParentId()==0|| comment.getCommentator()==null){
